@@ -1,5 +1,7 @@
 Attribute VB_Name = "avancement"
+' advancement
 Sub ordonnancement_CCPM()
+    ' scheduling
 
     Call retrieve_tasks
     Call record_avancement
@@ -8,7 +10,7 @@ Sub ordonnancement_CCPM()
     Dim case_debut As Integer, case_fin As Integer, avancement As Double, date_actuelle As Integer, vertical_margin As Integer, marge As Integer
     Dim check As Boolean, u As Integer, max As Integer
     Dim temps_theorique As Integer
-    Dim case_debut_theorique As Integer 'numéro de colonne
+    Dim case_debut_theorique As Integer 'numï¿½ro de colonne
     Dim conso_buffer As Integer
     Dim pourcentage_conso_buffer As Integer
     Dim duree_buffer As Integer
@@ -25,70 +27,70 @@ Sub ordonnancement_CCPM()
     Set k = ThisWorkbook.Worksheets("LOGS")
     Set sh = ThisWorkbook.Worksheets("LOGS_FV_CHART")
     Set cc = ThisWorkbook.Worksheets("LOGS_CCPM")
-    Set t = taches 'commence à indice 1
-    marge = 6 'colonnes
-    vertical_margin = 6 ' lignes
+    Set t = taches 'start index 1
+    marge = 6 'columns
+    vertical_margin = 6 ' lines
     marge_fin = ThisWorkbook.Worksheets("LOGS").Cells(2, 1).value + 3 'marge + 4 avant
-    
+
     j = 0
     date_actuelle = colonne_date_actuelle
     max = 0
-    Range(cc.Cells(2, 3), cc.Cells(250, 4)).ClearContents 'Clean des valeurs de décalage
+    Range(cc.Cells(2, 3), cc.Cells(250, 4)).ClearContents 'Clean offset values
     If date_actuelle = 0 Then
         Exit Sub
     End If
 
-    For i = 1 To t.Count ' set les débuts
-        
+    For i = 1 To t.Count ' set les dï¿½buts
+
         l = 1
         While k.Cells(21 + l, 9) <> t(i).get_ID
             l = l + 1
         Wend
         t(i).set_debut (k.Cells(21 + l, 10) / 2 + marge)
-        
-    Next i ' set les débuts
-    
+
+    Next i ' set les dï¿½buts
+
     Dim nb_chaines As Integer
     nb_chaines = 0
-    
-    While k.Cells(j + 15, 15) <> "" ' calculer le nombre de chaînes qu'il y a
+
+    While k.Cells(j + 15, 15) <> "" ' Calculate the number of strings
         nb_chaines = nb_chaines + 1
         j = j + 1
     Wend
 
     j = 0
     While k.Cells(j + 15, 15) <> ""
-        
-        '--------------------------------- Chaîne critique -----------------------------------
-        If j = 0 Then ' On est dans la chaîne critique
-            Debug.Print "Chaîne critique"
+
+        '--------------------------------- Critical Chain -----------------------------------
+        If j = 0 Then ' We are in the critical chain
+            Debug.Print "Chaï¿½ne critique"
             l = 0
-            While sh.Cells(17 + l, 6) <> "" 'prendre le dernier % de conso buffer
+            While sh.Cells(17 + l, 6) <> "" 'Take the last % of consumption buffer
                 l = l + 1
             Wend
-                
-            pourcentage_conso_buffer = sh.Cells(17 + l - 1, 6) ' C'est un pourcentage
-            Debug.Print "Pourcentage buffer consommé " & pourcentage_conso_buffer
-                
-            If pourcentage_conso_buffer > 0 Then ' on a consommé du buffer
-            
+
+            pourcentage_conso_buffer = sh.Cells(17 + l - 1, 6) ' It is a percentage
+            Debug.Print "Buffer Percentage Consumed " & pourcentage_conso_buffer
+
+            If pourcentage_conso_buffer > 0 Then ' we consumed buffer
+
                 duree_buffer = CInt(k.Cells(15, 16) / 4)
                 conso_buffer = pourcentage_conso_buffer / 100 * duree_buffer
-                Debug.Print "buffer consommé " & conso_buffer
+                Debug.Print "Buffer Consumes " & conso_buffer
                 cc.Cells(t.Count + 2, 4) = conso_buffer
-                    
-                For m = 1 To t.Count ' Calcul des décalages
+
+                For m = 1 To t.Count ' Calculation of shifts
                     indice_ligne = trouver_ligne_indice(t(m).get_ID)
                     avancement = s.Cells(indice_ligne, 3)
-                    
+
                     decalage = conso_buffer
                     sauv = cc.Cells(1 + t(m).get_ID, 3)
                     cc.Cells(1 + t(m).get_ID, 3) = sauv + decalage
-                        
+
                 Next m
-                
-                '------------- Décalage des autres buffers  -----------
-                
+
+                '------------- Timing of other buffers  -----------
+
                 For m = 1 To nb_chaines
                     If m <> 1 Then
                     indice_ligne = trouver_ligne_indice(t.Count + m)
@@ -101,122 +103,122 @@ Sub ordonnancement_CCPM()
                     End If
                 Next m
 
-            End If ' on a consommé du buffer
-            
-            '----------------------------- Chaîne secondaire -----------------------------------
-            
-        Else ' dans une chaîne secondaire
-            
-            Debug.Print "Chaîne non critique numéro " & j
+            End If ' we consumed buffer
+
+            '----------------------------- Secondary chain -----------------------------------
+
+        Else ' in a secondary chain
+
+            Debug.Print "Non-critical channel number " & j
             l = 0
-    
-            While sh.Cells(17 + l, 4 * (j + 1) + 2) <> "" 'prendre le dernier % de conso buffer, avant j ct test
+
+            While sh.Cells(17 + l, 4 * (j + 1) + 2) <> "" 'take the last % of buffer consumption, before test
                 l = l + 1
             Wend
-                
-            pourcentage_conso_buffer = sh.Cells(17 + l - 1, 4 * (j + 1) + 2) ' C'est un pourcentage
-            Debug.Print "Pourcentage buffer consommé " & pourcentage_conso_buffer
-            If pourcentage_conso_buffer > 0 Then ' on a consommé du buffer
-                
-                'Paramètrage buffer
+
+            pourcentage_conso_buffer = sh.Cells(17 + l - 1, 4 * (j + 1) + 2) ' It is a percentage
+            Debug.Print "Buffer Percentage Consumed " & pourcentage_conso_buffer
+            If pourcentage_conso_buffer > 0 Then ' we consumed buffer
+
+                'Buffer settings
                 duree_buffer = CInt(k.Cells(15 + j, 16) / 4)
                 conso_buffer = pourcentage_conso_buffer / 100 * duree_buffer
                 cc.Cells(t.Count + 2 + j, 4) = conso_buffer
-                debut_buffer = k.Cells(15 + j, 17) 'On récupère la date de début
+                debut_buffer = k.Cells(15 + j, 17) 'We get the start date back
                 fin_buffer = debut_buffer + CInt(k.Cells(15 + j, 16) / 4)
-                Debug.Print "Début buffer " & debut_buffer & " et fin buffer " & fin_buffer
-                
+                Debug.Print "Dï¿½but buffer " & debut_buffer & " et fin buffer " & fin_buffer
+
                 splito = Split(k.Cells(15 + j, 15), ",")
-                
-                        '------------------- Surconsommation buffer -------------------
-                
-                
-                If pourcentage_conso_buffer > 100 Then ' On a surconsommé le buffer, on décale toutes les tâches qui date d'après la fin du buffer
-                        
-                    For m = 1 To t.Count ' On décale toutes les tâches après la fin du buffer de la chaîne
-                            
-                        indice_ligne = trouver_ligne_indice(t(m).get_ID) 'On trouve sa ligne
+
+                        '------------------- Overconsumption buffer -------------------
+
+
+                If pourcentage_conso_buffer > 100 Then ' We overconsumed the buffer, we postpone all the tasks that date from after the end of the buffer
+
+                    For m = 1 To t.Count ' We postpone all the tasks after the end of the buffer of the chain
+
+                        indice_ligne = trouver_ligne_indice(t(m).get_ID) 'We find our line
                         avancement = s.Cells(indice_ligne, 3)
 
-                        If fin_buffer < t(m).get_debut Then ' tâche qui commence après la fin du buffer
+                        If fin_buffer < t(m).get_debut Then ' task that starts after the buffer ends
                             decalage = conso_buffer
                             sauv = cc.Cells(1 + t(m).get_ID, 3)
                             cc.Cells(1 + t(m).get_ID, 3) = sauv + decalage
-                                    
-                        End If ' tâche commence après fin buffer
+
+                        End If ' task started after the end of buffer
                     Next m
-                      
-                    '----- Décalage des autres buffers si needed ---------
+
+                    '----- Offsetting the other buffers if needed. ---------
                     For m = 1 To nb_chaines
-                        indice_ligne = trouver_ligne_indice(t.Count + m) 'On trouve sa ligne
+                        indice_ligne = trouver_ligne_indice(t.Count + m) 'We find our line
                         'avancement = s.Cells(indice_ligne, 3)
-                        
-                        If m <> j + 1 Then ' pas décaler la chaîne même du buffer
-                            If fin_buffer < k.Cells(15 + m - 1, 17) Then ' buffer qui commence après la fin du buffer
+
+                        If m <> j + 1 Then ' not to calibrate the chain even of the buffer
+                            If fin_buffer < k.Cells(15 + m - 1, 17) Then ' Buffer that starts after the buffer ends
                                 decalage = conso_buffer
                                 sauv = cc.Cells(1 + t.Count + m, 3)
                                 cc.Cells(1 + t.Count + m, 3) = sauv + decalage
                                 Debug.Print "On decale la chaine " & m - 1 & " de " & decalage & "indice " & 1 + t.Count + m
-                            End If ' buffer commence après fin buffer de notre tâche
+                            End If ' buffer starts after the end of buffer of our task
                         End If
                     Next m
-                            ' ------------- Consommation non intégrale -------------
-                            
-                Else ' on a consommé mais pas entièrement, on décale les tâches de la chaîne
-                
-                    Debug.Print "Lbound splito = " & LBound(splito) & "Ubound splito = " & UBound(splito)
-                    For m = LBound(splito) To UBound(splito) 'pour les tâches de la chaine, pas le buffer dans tous les cas donc osef de trier
-                            
-                        indice_ligne = trouver_ligne_indice(CInt(splito(m))) 'On trouve la ligne de la tâche dans l'onglet GANTT
+                            ' ------------- Non-Integral Consumption -------------
+
+                Else ' we have consumed but not entirely, we shift the tasks of the chain
+
+                    Debug.Print "Lbound split = " & LBound(splito) & "Ubound split = " & UBound(splito)
+                    For m = LBound(splito) To UBound(splito) 'for the chain tasks, not the buffer in any case so osef to sort
+
+                        indice_ligne = trouver_ligne_indice(CInt(splito(m))) 'The line of the task can be found in the GANTT tab
                         avancement = s.Cells(indice_ligne, 3)
-                        
+
                         decalage = conso_buffer
                         sauv = cc.Cells(1 + CInt(splito(m)), 3)
                         cc.Cells(1 + CInt(splito(m)), 3) = sauv + decalage
-                        
+
                     Next m
-                        
-                End If ' conso buff. Si inférieur ou égale à 0, rien ne se passe.
-  
-            End If 'chaîne secondaire, les indep seront en dehors du while
-                        
-        End If 'dans la chaîne critique
+
+                End If ' Buffer consumption. If less than 0 or equal, nothing happens.
+
+            End If 'secondary channel, the indep will be outside the
+
+        End If 'in the critical chain
         j = j + 1
     Wend
-    
-    '------------- Traçage des tâches -------------
-    
+
+    '------------- Task tracing -------------
+
     For m = 1 To t.Count
-    
-        indice_ligne = trouver_ligne_indice(t(m).get_ID) 'On trouve sa ligne
+
+        indice_ligne = trouver_ligne_indice(t(m).get_ID) 'We find our line
         avancement = s.Cells(indice_ligne, 3)
         fini = cc.Cells(1 + t(m).get_ID, 5)
         If fini = 0 Then
             chaine = dans_quel_chaine(t(m).get_ID)
-            Debug.Print "Tâche " & t(m).get_ID & " dans chaîne " & chaine
-            
+            Debug.Print "Task " & t(m).get_ID & " in each " & chaine
+
             case_debut = t(m).get_debut + avancement * t(m).get_duree / 2 + cc.Cells(1 + t(m).get_ID, 3)
             case_fin = case_debut + (1 - avancement) * t(m).get_duree / 2 - 1
-            
-            If avancement = 1 Then ' Dernier parcours de cette tâche
+
+            If avancement = 1 Then ' Last course of this task
                 cc.Cells(1 + t(m).get_ID, 5) = 1
             End If
-            
-            Debug.Print "tache " & t(m).get_ID & "case_deb " & case_debut & " fin " & case_fin & " oui " & t(m).get_duree / 2 - 1 & "avancement " & 1 - avancement & " donc " & (1 - avancement) * t(m).get_duree / 2 - 1
+
+            Debug.Print "task " & t(m).get_ID & "case_deb " & case_debut & " fin " & case_fin & " oui " & t(m).get_duree / 2 - 1 & "avancement " & 1 - avancement & " donc " & (1 - avancement) * t(m).get_duree / 2 - 1
             If case_fin < 0 Then
-                MsgBox "Veuillez vérifier la valeur des avancements saisies svp."
+                MsgBox "Please check the value of the advances entered."
                 Exit Sub
             End If
             'Clean
             Range(s.Cells(indice_ligne + 1, marge), s.Cells(indice_ligne + 1, marge_fin)).ClearContents
             Range(s.Cells(indice_ligne + 1, marge), s.Cells(indice_ligne + 1, marge_fin)).Interior.ColorIndex = 2
             Range(s.Cells(indice_ligne, CInt(t(m).get_debut)), s.Cells(indice_ligne, CInt(t(m).get_debut + t(m).get_duree / 2))).Interior.Pattern = xlPatternSolid
-            
-            'Traçage
+
+            'Tracing
             If avancement <> 1 Then
-                s.Cells(indice_ligne + 1, case_debut) = t(m).get_ID ' Numéroter la tâche
-            
-                If chaine = 0 Then ' gestion des couleurs
+                s.Cells(indice_ligne + 1, case_debut) = t(m).get_ID ' Numï¿½roter la tï¿½che
+
+                If chaine = 0 Then ' Color Management
                     Range(s.Cells(indice_ligne + 1, case_debut), s.Cells(indice_ligne + 1, case_fin)).Interior.ColorIndex = 22
                     If avancement <> 0 Then
                         Range(s.Cells(indice_ligne, CInt(t(m).get_debut)), s.Cells(indice_ligne, CInt(t(m).get_debut + t(m).get_duree / 2 - 1))).Interior.ColorIndex = 3
@@ -227,7 +229,7 @@ Sub ordonnancement_CCPM()
                         End If
                         s.Cells(indice_ligne, case_debut).Font.ColorIndex = 2
                     End If
-                ElseIf chaine = -1 Then 'la tâche n'est pas dans une chaîne
+                ElseIf chaine = -1 Then 'The task is not in a chain
                     If avancement <> 0 Then
                         Range(s.Cells(indice_ligne, CInt(t(m).get_debut)), s.Cells(indice_ligne, CInt(t(m).get_debut + t(m).get_duree / 2 - 1))).Interior.ColorIndex = 5
                         If avancement >= 1 Then
@@ -237,8 +239,8 @@ Sub ordonnancement_CCPM()
                         End If
                     End If
                     Range(s.Cells(indice_ligne + 1, case_debut), s.Cells(indice_ligne + 1, case_fin)).Interior.ColorIndex = 34
-                    
-                Else ' la tâche est dans une chaîne secondaire
+
+                Else ' the task is in a secondary chain
                     If avancement <> 0 Then
                         Range(s.Cells(indice_ligne, CInt(t(m).get_debut)), s.Cells(indice_ligne, CInt(t(m).get_debut + t(m).get_duree / 2 - 1))).Interior.ColorIndex = 4
                         If avancement >= 1 Then
@@ -246,17 +248,17 @@ Sub ordonnancement_CCPM()
                         Else
                         Range(s.Cells(indice_ligne, CInt(t(m).get_debut)), s.Cells(indice_ligne, CInt(t(m).get_debut + avancement * t(m).get_duree / 2 - 1))).Interior.Pattern = xlPatternLightUp
                         End If
-                        
+
                     End If
                     Range(s.Cells(indice_ligne + 1, case_debut), s.Cells(indice_ligne + 1, case_fin)).Interior.ColorIndex = 35
-                End If ' quelle chaine (gestion des couleurs)
-            Else 'avancement égale à 1
+                End If ' which chain (color management)
+            Else 'avancement ï¿½gale ï¿½ 1
                 Range(s.Cells(indice_ligne, CInt(t(m).get_debut)), s.Cells(indice_ligne, CInt(t(m).get_debut + t(m).get_duree / 2 - 1))).Interior.Pattern = xlPatternLightUp
                 Range(s.Cells(indice_ligne + 1, marge), s.Cells(indice_ligne + 1, marge_fin)).ClearContents
                 Range(s.Cells(indice_ligne + 1, marge), s.Cells(indice_ligne + 1, marge_fin)).Interior.ColorIndex = 2
                 s.Cells(indice_ligne, 3).Interior.ColorIndex = 15
-            
-            End If 'Avancement différent de 1
+
+            End If 'Avancement diffï¿½rent de 1
         Else
             Range(s.Cells(indice_ligne, CInt(t(m).get_debut)), s.Cells(indice_ligne, CInt(t(m).get_debut + t(m).get_duree / 2 - 1))).Interior.Pattern = xlPatternLightUp
             Range(s.Cells(indice_ligne + 1, marge), s.Cells(indice_ligne + 1, marge_fin)).ClearContents
@@ -264,47 +266,47 @@ Sub ordonnancement_CCPM()
             s.Cells(indice_ligne, 3).Interior.ColorIndex = 15
         End If ' Fini
     Next m
-    
-    '------------- Traçage des buffers + leur conso -----------
+
+    '------------- Buffer tracking + their consumption -----------
     For m = 1 To nb_chaines
         indice_ligne = trouver_ligne_indice(t.Count + m)
-        debut_buffer = k.Cells(15 + m - 1, 17) / 2 + 6 + cc.Cells(t.Count + m + 1, 3) 'On récupère la date de début et on ajoute le décalage (dû à autres chaînes), /2 +6 pr conversion heures en colonne
+        debut_buffer = k.Cells(15 + m - 1, 17) / 2 + 6 + cc.Cells(t.Count + m + 1, 3) 'On rï¿½cupï¿½re la date de dï¿½but et on ajoute le dï¿½calage (dï¿½ ï¿½ autres chaï¿½nes), /2 +6 pr conversion heures en colonne
         'debut_buffer = debut_buffer / 2 + 6
         conso_buffer = cc.Cells(t.Count + m + 1, 4)
         duree_buffer = CInt(k.Cells(15 + m - 1, 16) / 4)
         If debut_buffer = 0 Then 'Protection
-            MsgBox "Problème rencontré, veuillez réactualiser le GANTT classique svp."
+            MsgBox "Problem encountered me, please update the classic GANTT."
             Exit Sub
         End If 'Protection
-                
-        'Debug.Print "Début buffer chaîne " & m - 1 & " à " & debut_buffer & " indice de ligne " & indice_ligne & " et conso " & conso_buffer & " et durée " & duree_buffer
+
+        'Debug.Print "Dï¿½but buffer chaï¿½ne " & m - 1 & " ï¿½ " & debut_buffer & " indice de ligne " & indice_ligne & " et conso " & conso_buffer & " et durï¿½e " & duree_buffer
         'Clean
         Range(s.Cells(indice_ligne + 1, marge), s.Cells(indice_ligne + 1, marge_fin)).ClearContents
         Range(s.Cells(indice_ligne + 1, marge), s.Cells(indice_ligne + 1, marge_fin)).Interior.ColorIndex = 2
-        'Traçage
+        'Traï¿½age
         If conso_buffer <> 0 Then
-            Range(s.Cells(indice_ligne + 1, debut_buffer), s.Cells(indice_ligne + 1, debut_buffer + conso_buffer - 1)).Interior.ColorIndex = 1 ' y'a un -1 à mettre mais jsp pq
+            Range(s.Cells(indice_ligne + 1, debut_buffer), s.Cells(indice_ligne + 1, debut_buffer + conso_buffer - 1)).Interior.ColorIndex = 1 ' y'a un -1 ï¿½ mettre mais jsp pq
         Else
             s.Cells(indice_ligne + 1, debut_buffer).Interior.ColorIndex = 15
-            'Range(s.Cells(indice_ligne + 1, debut_buffer), s.Cells(indice_ligne + 1, debut_buffer + duree_buffer - 1)).Interior.ColorIndex = 15 'rajouté récemment
+            'Range(s.Cells(indice_ligne + 1, debut_buffer), s.Cells(indice_ligne + 1, debut_buffer + duree_buffer - 1)).Interior.ColorIndex = 15 'rajoutï¿½ rï¿½cemment
         End If
-        If m = 1 Then ' numéroter
+        If m = 1 Then ' numï¿½roter
             s.Cells(indice_ligne + 1, debut_buffer).Font.ColorIndex = 2
-            s.Cells(indice_ligne + 1, debut_buffer) = "Buffer chaîne critique" ' Numéroter le buffer
-            
+            s.Cells(indice_ligne + 1, debut_buffer) = "Buffer chaï¿½ne critique" ' Numï¿½roter le buffer
+
         Else
-            s.Cells(indice_ligne + 1, debut_buffer) = "Buffer " & m - 1 ' Numéroter le buffer
+            s.Cells(indice_ligne + 1, debut_buffer) = "Buffer " & m - 1 ' Numï¿½roter le buffer
             s.Cells(indice_ligne + 1, debut_buffer).Font.ColorIndex = 2
-        End If ' numéroter
-        If conso_buffer < duree_buffer Then 'Si on a pas tout consommé
+        End If ' numï¿½roter
+        If conso_buffer < duree_buffer Then 'Si on a pas tout consommï¿½
             Range(s.Cells(indice_ligne + 1, debut_buffer + conso_buffer), s.Cells(indice_ligne + 1, debut_buffer + duree_buffer - 1)).Interior.ColorIndex = 15 'pareil pr le -1
-        End If ' si on a pas tt consommé
+        End If ' if we don't have tt consumption
     Next m
-    
+
 End Sub
 
 
-'écriture en logs et appel de la conso buffer
+'Write to logs and call the buffer consumption
 Sub record_avancement()
 
     Dim i As Integer, s As Worksheet, pos_actuelle As Integer
@@ -314,7 +316,7 @@ Sub record_avancement()
     If colonne_date_actuelle > 30000 Then 'Protection erreur
         Exit Sub
     End If
-    
+
     While s.Cells(1, i).value <> pos_actuelle And s.Cells(1, i).value <> ""
         i = i + 1
     Wend
@@ -327,7 +329,7 @@ Sub record_avancement()
         s.Cells(j / 2 - 1, i).value = g.Cells(j, 3).value
         j = j + 2
     Wend
-    
+
     Call consume_buffers(pos_actuelle, i)
 
 End Sub

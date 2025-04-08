@@ -26,10 +26,10 @@ Public Sub set_attributes(n As String, Optional tach As String)
     End If
 End Sub
 
-'affichage de la tâche sur la feuille excel
+'Displaying the task on the Excel sheet
 Public Sub Display()
     Dim s As Worksheet, v As Integer, h As Integer
-    Set s = ThisWorkbook.Worksheets("TÂCHES")
+    Set s = ThisWorkbook.Worksheets("Tï¿½CHES")
     v = RSC_vertical_margin
     h = RSC_horizontal_margin
     Range(s.Cells(v - 1 + id, h), s.Cells(v - 1 + id, h)).Interior.Color = RGB(220, 220, 220)
@@ -65,4 +65,3 @@ End Sub
 Public Function str() As String
     str = "Ressource " + Chr(64 + id) + ". Nom : " + nom + "."
 End Function
-
