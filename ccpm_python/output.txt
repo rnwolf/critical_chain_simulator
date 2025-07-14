@@ -1,0 +1,13 @@
+# Scheduled Tasks
+Task 1: Task 1, Start: 0, Finish: 10
+Task 2: Task 2, Start: 10, Finish: 30
+Task 3: Task 3, Start: 10, Finish: 25
+Task 4: Task 4, Start: 30, Finish: 35
+Task 5: Task 5, Start: 35, Finish: 45
+Task -1: Project Buffer, Start: 45, Finish: 45.0
+
+# Critical Chain
+Task 1: Task 1
+Task 2: Task 2
+Task 4: Task 4
+Task 5: Task 5
