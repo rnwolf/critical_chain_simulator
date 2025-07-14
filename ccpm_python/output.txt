@@ -1,0 +1,18 @@
+# Scheduled Tasks
+Task 1: Task A, Start: 0, Finish: 10
+Task 2: Task B, Start: 0, Finish: 5
+Task 6: Task F, Start: 0, Finish: 7
+Task 4: Task D, Start: 5, Finish: 13
+Task 7: Task G, Start: 7, Finish: 15
+Task 3: Task C, Start: 10, Finish: 22
+Task -2: Feeding Buffer for T5, Start: 13, Finish: 15.5
+Task -2: Feeding Buffer for T8, Start: 15, Finish: 18.5
+Task 5: Task E, Start: 22, Finish: 32
+Task 8: Task H, Start: 32, Finish: 42
+Task -1: Project Buffer, Start: 42, Finish: 52.5
+
+# Critical Chain
+Task 1: Task A
+Task 3: Task C
+Task 5: Task E
+Task 8: Task H
