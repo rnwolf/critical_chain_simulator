@@ -1,11 +1,12 @@
 import os
+import csv
 from utils import retrieve_tasks, retrieve_resources
 from ccpm import find_critical_chain, schedule_tasks, insert_buffers
 
 def main():
     # The script is run from the root directory, so the input file is in the ccpm_python directory
     input_file = "ccpm_python/input.txt"
-    output_file = "ccpm_python/output.txt"
+    output_file = "ccpm_python/output.csv"
 
     # Retrieve tasks and resources from the input file
     tasks = retrieve_tasks("ccpm_python")
@@ -21,14 +22,19 @@ def main():
     schedule_tasks(tasks, critical_chain)
 
     # Write the output to a file
-    with open(output_file, "w") as f:
-        f.write("# Scheduled Tasks\n")
+    with open(output_file, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["ID", "Title", "Start Time", "Finish Time", "Resources", "Predecessors", "Critical Chain"])
         for task in sorted(tasks, key=lambda t: t.start_time):
-            f.write(f"Task {task.id}: {task.title}, Start: {task.start_time}, Finish: {task.finish_time}\n")
-
-        f.write("\n# Critical Chain\n")
-        for task in critical_chain:
-            f.write(f"Task {task.id}: {task.title}\n")
+            writer.writerow([
+                task.id,
+                task.title,
+                task.start_time,
+                task.finish_time,
+                ";".join(map(str, task.resources)),
+                ";".join(map(str, task.predecessors)),
+                task in critical_chain
+            ])
 
 if __name__ == "__main__":
     main()
