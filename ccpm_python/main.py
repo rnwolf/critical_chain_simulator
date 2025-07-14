@@ -1,10 +1,15 @@
+import os
 from utils import retrieve_tasks, retrieve_resources
 from ccpm import find_critical_chain, schedule_tasks, insert_buffers
 
 def main():
+    # The script is run from the root directory, so the input file is in the ccpm_python directory
+    input_file = "ccpm_python/input.txt"
+    output_file = "ccpm_python/output.txt"
+
     # Retrieve tasks and resources from the input file
-    tasks = retrieve_tasks()
-    resources = retrieve_resources()
+    tasks = retrieve_tasks("ccpm_python")
+    resources = retrieve_resources("ccpm_python")
 
     # Find the critical chain
     critical_chain = find_critical_chain(tasks)
@@ -16,7 +21,7 @@ def main():
     schedule_tasks(tasks, critical_chain)
 
     # Write the output to a file
-    with open("output.txt", "w") as f:
+    with open(output_file, "w") as f:
         f.write("# Scheduled Tasks\n")
         for task in sorted(tasks, key=lambda t: t.start_time):
             f.write(f"Task {task.id}: {task.title}, Start: {task.start_time}, Finish: {task.finish_time}\n")

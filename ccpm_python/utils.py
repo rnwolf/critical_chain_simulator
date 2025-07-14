@@ -1,9 +1,11 @@
 from task import Task
 from resource import Resource
+import os
 
-def retrieve_tasks(filename="input.txt"):
+def retrieve_tasks(base_dir, filename="input.txt"):
+    filepath = os.path.join(base_dir, filename)
     tasks = []
-    with open(filename, 'r') as f:
+    with open(filepath, 'r') as f:
         lines = f.readlines()
         task_section = False
         for line in lines:
@@ -25,9 +27,10 @@ def retrieve_tasks(filename="input.txt"):
                 tasks.append(Task(id, title, duration, nominal_duration, resources, predecessors))
     return tasks
 
-def retrieve_resources(filename="input.txt"):
+def retrieve_resources(base_dir, filename="input.txt"):
+    filepath = os.path.join(base_dir, filename)
     resources = []
-    with open(filename, 'r') as f:
+    with open(filepath, 'r') as f:
         lines = f.readlines()
         resource_section = False
         for line in lines:
